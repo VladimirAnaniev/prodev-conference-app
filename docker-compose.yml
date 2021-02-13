@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: conference_go
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      - postgres
+    restart: on-failure
+    environment:
+      PORT: 80
+      JWT_SECRET: oiashd8w73y24iuhrt8o427tryhsdgjn
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: conference_go 
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGAPPNAME: Conference Go!
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:8080/api
+    depends_on: 
+      - backend
+    ports:
+      - "8080:80"
+      
