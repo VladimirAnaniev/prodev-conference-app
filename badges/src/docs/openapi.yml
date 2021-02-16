@@ -1,0 +1,154 @@
+openapi: 3.0.1
+info:
+  title: Conference GO Authentication Service
+  description: 'This service is responsible for account creation and authentication'
+  contact:
+    email: profdev@hackreactor.com
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/
+tags:
+- name: accounts
+  description: Maintaining accounts for the app
+- name: session
+  description: Creating a session for a person to use the app
+paths:
+  /api/accounts:
+    post:
+      tags:
+      - accounts
+      summary: Add a new account to the system
+      requestBody:
+        description: The information used to create the account. The email and password parameters will be trimmed of leading and trailing whitespace.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountInformation'
+        required: true
+      responses:
+        201:
+          description: Successful account creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: Could not create the account and code will be either INVALID_PARAMETER or MISSING_PARAMETER.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/session:
+    put:
+      tags:
+      - session
+      summary: Create a session for the person
+      requestBody:
+        description: The information used to create the session. The email and password parameters will be trimmed of leading and trailing whitespace.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+        required: true
+      responses:
+        201:
+          description: Successful session creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: Could not create the session with code BAD_CREDENTIALS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - BAD_CREDENTIALS
+          - INVALID_TOKEN
+          - INVALID_IDENTIFIER
+          - INVALID_PARAMETER
+          - MISSING_PARAMETER
+          - VERSION_CONFLICT
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              message:
+                type: string
+              rule:
+                type: string
+    Token:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+    AccountInformation:
+      required:
+      - name
+      - email
+      - password
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          maxLength: 100
+          format: email
+        password:
+          type: string
+    AttendeeCreation:
+      required:
+      - name
+      - email
+      - companyName
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          maxLength: 100
+          format: email
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 100
+    Credentials:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 100
+          format: email
+        password:
+          type: string
+    Empty:
+      type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 

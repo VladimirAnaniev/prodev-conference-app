@@ -1,6 +1,7 @@
 import { authorize } from '../security.mjs';
 import { pool } from '../db/index.mjs';
 import { trimProperty } from '../strings.mjs';
+import { createBadge } from '../http/badges.mjs';
 import Router from '@koa/router';
 
 const STATUSES = new Map();
@@ -135,7 +136,7 @@ router.put('/:id/approved', async ctx => {
     WHERE id = $1
     AND status_id IN (1, 2)
     AND event_id IN (SELECT e.id FROM events e WHERE e.account_id = $2)
-    RETURNING email, presenter_name AS "presenterName", company_name AS "companyName", title, synopsis
+    RETURNING id, email, presenter_name AS "presenterName", company_name AS "companyName", title, synopsis
   `, [id, ctx.claims.id]);
   if (rows.length === 0) {
     ctx.status = 404;
@@ -145,15 +146,7 @@ router.put('/:id/approved', async ctx => {
     };
   }
 
-  const { email, presenterName, companyName, title, synopsis } = rows[0];
-
-  await pool.query(`
-    INSERT INTO badges (email, name, company_name, role, event_id)
-    VALUES ($1, $2, $3, 'SPEAKER', $4)
-    ON CONFLICT (email, event_id)
-    DO
-    UPDATE SET role = 'SPEAKER'
-  `, [email, presenterName, companyName, eventId]);
+  await createBadge(eventId, accountId, email, presenterName, companyName, 'SPEAKER');
 
   ctx.body = {
     id,

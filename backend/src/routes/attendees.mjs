@@ -1,6 +1,7 @@
 import { authorize } from '../security.mjs';
 import { pool } from '../db/index.mjs';
 import { trimProperty } from '../strings.mjs';
+import { createBadge } from '../http/badges.mjs';
 import Router from '@koa/router';
 
 export const router = new Router({
@@ -87,12 +88,7 @@ router.post('/', async ctx => {
     };
   }
 
-  await pool.query(`
-    INSERT INTO badges (email, name, company_name, role, event_id)
-    VALUES ($1, $2, $3, '', $4)
-    ON CONFLICT (email, event_id)
-    DO NOTHING
-  `, [email, name, companyName, eventId]);
+  await createBadge(eventId, accountId, email, name, companyName, '');
 
   const { id, created } = attendeesRows[0];
   ctx.status = 201;

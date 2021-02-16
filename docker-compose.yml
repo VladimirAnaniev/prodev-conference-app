@@ -52,6 +52,31 @@ services:
       PGUSER: postgres
       PGPASSWORD: postgres
 
+  badges-postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres 
+      POSTGRES_DB: badges
+    volumes:
+      - ./badges/data:/var/lib/postgresql/data
+  badges:
+    build:
+      context: ./badges
+    depends_on:
+      - badges-postgres
+    restart: on-failure
+    volumes:
+      - ./badges/src:/usr/src/app/src
+    environment:
+      PORT: 80
+      JWT_SECRET: oiashd8w73y24iuhrt8o427tryhsdgjn
+      PGHOST: badges-postgres
+      PGPORT: 5432
+      PGDATABASE: badges 
+      PGUSER: postgres
+      PGPASSWORD: postgres
+
   frontend:
     build:
       context: ./frontend
