@@ -11,5 +11,5 @@ export const createBadge = new CircuiotBreaker(makeBadgeRequest, options);
 
 async function makeBadgeRequest(eventId, accountId, email, presenterName, companyName) {
     // TODO: get url from configurations
-    return axios.post(`http://badges/api/event/${eventId}/badges`, {accountId, email, presenterName, companyName});
+    return axios.post(`http://badges/api/event/${eventId}`, {accountId, email, presenterName, companyName});
 }

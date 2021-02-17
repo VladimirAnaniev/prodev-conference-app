@@ -12,8 +12,6 @@ tags:
   description: Maintaining accounts for the app
 - name: attendees
   description: Creating and reviewing attendees
-- name: badges
-  description: Reviewing badges
 - name: events
   description: Working with the events in the system
 - name: locations
@@ -230,36 +228,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
         - bearerAuth: []
-  /api/events/{eventId}/badges:
-    parameters:
-    - name: eventId
-      in: path
-      required: true
-      description: The numerical identifier of the event
-      schema:
-        type: integer
-    get:
-      tags:
-      - badges
-      summary: Gets the badges for an event
-      responses:
-        200:
-          description: The list of the badges for an event
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Badge'
-        401:
-          description: Unauthorized access with code INVALID_TOKEN
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - bearerAuth: []
-  /api/events/{eventId}/presentations:
+        /api/events/{eventId}/presentations:
     parameters:
     - name: eventId
       in: path

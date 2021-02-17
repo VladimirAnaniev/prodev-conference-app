@@ -145,8 +145,10 @@ router.put('/:id/approved', async ctx => {
       message: 'Could not approve that presentation.'
     };
   }
+  
+  const { email, presenterName, companyName, title, synopsis } = rows[0];
 
-  await createBadge(eventId, accountId, email, presenterName, companyName, 'SPEAKER');
+  await createBadge.fire(eventId, ctx.claims.id, email, presenterName, companyName, 'SPEAKER');
 
   ctx.body = {
     id,

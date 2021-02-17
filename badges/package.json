@@ -25,6 +25,7 @@
     "koa-body": "^4.2.0",
     "node-input-validator": "^4.3.3",
     "pg": "^8.5.1",
+    "qrcode": "^1.4.4",
     "swagger-parser": "^10.0.2",
     "swagger-ui-dist": "^3.41.1"
   }

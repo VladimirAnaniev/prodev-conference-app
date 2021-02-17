@@ -52,7 +52,7 @@ router.post('/', async ctx => {
     `, [eventId, accountId]);
   }
 
-  const {email, presenterName, companyName, role, eventId} = ctx.request.body;
+  const {email, presenterName, companyName, role} = ctx.request.body;
   // TODO: on conflict do nothing if role is empty, probably create 2 separate endpoints
   await pool.query(`
     INSERT INTO badges (email, name, company_name, role, event_id)

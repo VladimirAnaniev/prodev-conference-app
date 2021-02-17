@@ -1,68 +1,45 @@
 openapi: 3.0.1
 info:
-  title: Conference GO Authentication Service
-  description: 'This service is responsible for account creation and authentication'
+  title: Conference GO Badges Service
+  description: 'This service is responsible for Badges'
   contact:
     email: profdev@hackreactor.com
   version: 1.0.0
 servers:
 - url: http://localhost:8080/
 tags:
-- name: accounts
-  description: Maintaining accounts for the app
-- name: session
-  description: Creating a session for a person to use the app
+- name: badges
+  description: Reviewing badges
 paths:
-  /api/accounts:
-    post:
+ /api/events/{eventId}/badges:
+    parameters:
+    - name: eventId
+      in: path
+      required: true
+      description: The numerical identifier of the event
+      schema:
+        type: integer
+    get:
       tags:
-      - accounts
-      summary: Add a new account to the system
-      requestBody:
-        description: The information used to create the account. The email and password parameters will be trimmed of leading and trailing whitespace.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountInformation'
-        required: true
+      - badges
+      summary: Gets the badges for an event
       responses:
-        201:
-          description: Successful account creation
+        200:
+          description: The list of the badges for an event
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
-        400:
-          description: Could not create the account and code will be either INVALID_PARAMETER or MISSING_PARAMETER.
+                type: array
+                items:
+                  $ref: '#/components/schemas/Badge'
+        401:
+          description: Unauthorized access with code INVALID_TOKEN
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /api/session:
-    put:
-      tags:
-      - session
-      summary: Create a session for the person
-      requestBody:
-        description: The information used to create the session. The email and password parameters will be trimmed of leading and trailing whitespace.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Credentials'
-        required: true
-      responses:
-        201:
-          description: Successful session creation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-        400:
-          description: Could not create the session with code BAD_CREDENTIALS
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
 components:
   schemas:
     Error:

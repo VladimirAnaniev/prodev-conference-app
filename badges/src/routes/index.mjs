@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { router as badgesRouter } from './badgesmjs';
+import { router as badgesRouter } from './badges.mjs';
 
 export const router = new Router();
 
