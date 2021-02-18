@@ -1,6 +1,9 @@
 version: '3'
 
 services:
+  rabbitmq:
+    image: "rabbitmq:3"
+
   postgres:
     image: postgres:13-alpine
     environment:
@@ -25,6 +28,7 @@ services:
       PGDATABASE: conference_go 
       PGUSER: postgres
       PGPASSWORD: postgres
+      BADGES_HOST: http://badges
 
   
   account-postgres:
@@ -76,6 +80,8 @@ services:
       PGDATABASE: badges 
       PGUSER: postgres
       PGPASSWORD: postgres
+    ports:
+      - "8001:80"
 
   frontend:
     build:
@@ -86,4 +92,6 @@ services:
       - backend
     ports:
       - "8080:80"
+    volumes:
+      - ./frontend/frontend.nginx.conf:/etc/nginx/conf.d/default.conf
       

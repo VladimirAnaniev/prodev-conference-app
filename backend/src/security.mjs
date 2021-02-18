@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { pool } from './db/index.mjs';
 
 dotenv.config();
 

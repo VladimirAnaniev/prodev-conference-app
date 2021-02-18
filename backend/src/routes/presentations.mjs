@@ -1,7 +1,7 @@
 import { authorize } from '../security.mjs';
 import { pool } from '../db/index.mjs';
 import { trimProperty } from '../strings.mjs';
-import { createBadge } from '../http/badges.mjs';
+import { createPresenterBadge } from '../http/badges.mjs';
 import Router from '@koa/router';
 
 const STATUSES = new Map();
@@ -148,7 +148,7 @@ router.put('/:id/approved', async ctx => {
   
   const { email, presenterName, companyName, title, synopsis } = rows[0];
 
-  await createBadge.fire(eventId, ctx.claims.id, email, presenterName, companyName, 'SPEAKER');
+  await createPresenterBadge.fire(eventId, {accountId: ctx.claims.id, email, name: presenterName, companyName}, ctx.get('Authorization'));
 
   ctx.body = {
     id,

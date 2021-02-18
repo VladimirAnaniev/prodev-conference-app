@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import Koa from 'koa';
 import niv from 'node-input-validator';
 import { router } from './routes/index.mjs';
+import { bearer, authorize } from './security.mjs';
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ app.use(cors({
 }));
 
 app.use(niv.koa());
+app.use(bearer);
+app.use(authorize);
 
 app.use(bodyParser({ multipart: true }));
 

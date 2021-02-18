@@ -19,3 +19,22 @@ export async function authorize(ctx, next) {
   }
   await next();
 }
+
+export async function bearer(ctx, next) {
+  const auth = ctx.get('Authorization');
+  if (auth && auth.startsWith('Bearer ')) {
+    let token = auth.substring(7);
+    try {
+      ctx.claims = verifyToken(token);
+    } catch (e) {
+      console.error('INVALID TOKEN!')
+      console.error(decodeToken(token));
+      console.error(e);
+    }
+  }
+  await next();
+}
+
+export function verifyToken(token) {
+  return jwt.verify(token, secret);
+}
