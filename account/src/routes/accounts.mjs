@@ -4,8 +4,6 @@ import bcrypt from 'bcryptjs';
 import { signToken } from '../security.mjs';
 import { trimProperty } from '../strings.mjs';
 
-const DEFAULT_HASH = '$2a$10$QlWNohhjpbGuty6UnyeeJOeKY6dKbiaoFxeWdOoIUiNYaO/ZD2khW';
-
 export const router = new Router({
   prefix: '/accounts',
 });
@@ -38,8 +36,8 @@ router.post('new_account', '/', async ctx => {
       VALUES ($1, $2, $3)
       RETURNING created, updated
     `, [name, email, hash]);
-    const { created, updated } = rows[0];
-    const token = signToken({ name, email, created, updated });
+    const { id, created, updated } = rows[0];
+    const token = signToken({ id, name, email, created, updated });
     ctx.status = 201;
     ctx.body = { token };
   } catch (e) {

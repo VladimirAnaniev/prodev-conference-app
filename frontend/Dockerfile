@@ -7,7 +7,7 @@
 # essentially throwing away the gunk from the first image.
 
 # Build the React app
-FROM node:15.8.0-alpine3.12
+FROM node:15-alpine
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN ["npm", "install"]
