@@ -10,7 +10,7 @@ export function createEvent(eventId, accountId) {
 }
 
 export async function existsEvent(eventId, accountId) {
-    const { events } = await pool.query(`
+    const events = await pool.query(`
         SELECT 1
         FROM events
         WHERE id = $1
@@ -20,7 +20,7 @@ export async function existsEvent(eventId, accountId) {
 }
 
 export function createAttendeeBadge(email, name, companyName, eventId) {
-    pool.query(`
+    return pool.query(`
         INSERT INTO badges (email, name, company_name, role, event_id)
         VALUES ($1, $2, $3, '', $4)
         ON CONFLICT DO NOTHING
@@ -28,7 +28,7 @@ export function createAttendeeBadge(email, name, companyName, eventId) {
 }
 
 export function createSpeakerBadge(email, name, companyName, eventId) {
-    pool.query(`
+    return pool.query(`
         INSERT INTO badges (email, name, company_name, role, event_id)
         VALUES ($1, $2, $3, 'SPEAKER', $4)
         ON CONFLICT (email, event_id)

@@ -1,6 +1,7 @@
 import { pool } from '../db/index.mjs';
 import Router from '@koa/router';
 import { authorize } from '../security.mjs';
+import { eventsQueue } from '../queue/events.mjs';
 
 async function getOneEvent(id, accountId) {
   const { rows } = await pool.query(`
@@ -100,6 +101,9 @@ router.post('/', async ctx => {
   `, [locationId]);
 
   const [{ id, created, updated, version, numberOfPresentations, maximumNumberOfAttendees }] = eventRows;
+  
+  eventsQueue.publishEvent({id, accountId});
+  
   ctx.status = 201;
   ctx.body = {
     name,

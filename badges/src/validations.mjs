@@ -1,6 +1,7 @@
 import { existsEvent } from "./db/index.mjs";
 
-export const validateCreateBadgeRequest = async ctx => {
+export const validateCreateBadgeRequest = async (ctx, next) => {
+  console.log("Validating Create Badge request");
   const { eventId } = ctx.params;
   let eventIdValidator = await ctx.validator(ctx.params, {
     eventId: 'required|integer',
@@ -37,9 +38,11 @@ export const validateCreateBadgeRequest = async ctx => {
       message: 'Could not find an event with this id.',
     };
   }
+  await next();
 }
 
-export const validateGetBadgesRequest =  async ctx => {
+export const validateGetBadgesRequest =  async (ctx, next) => {
+  console.log('Validating GET Request');
   let v = await ctx.validator(ctx.params, {
     eventId: 'required|integer',
   });
@@ -53,4 +56,5 @@ export const validateGetBadgesRequest =  async ctx => {
       errors: v.errors,
     };
   }
+  await next();
 }

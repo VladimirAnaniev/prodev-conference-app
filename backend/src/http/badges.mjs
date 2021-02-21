@@ -16,9 +16,9 @@ export const createPresenterBadge = new CircuiotBreaker(presenterBadgeRequest, o
 export const createAttendeeBadge = new CircuiotBreaker(attendeeBadgeRequest, options);
 
 async function presenterBadgeRequest(eventId, badgeData, authorization) {
-    return axios.post(`${badgesHost}/api/event/${eventId}/presenter`, badgeData, {headers: {Authorization: authorization}});
+    return axios.post(`${badgesHost}/api/${eventId}/presenter`, badgeData, {headers: {Authorization: authorization}});
 }
 
 async function attendeeBadgeRequest(eventId, badgeData, authorization) {
-    return axios.post(`${badgesHost}/api/event/${eventId}/attendee`, badgeData, {headers: {Authorization: authorization}});
+    return axios.post(`${badgesHost}/api/${eventId}/attendee`, badgeData, {headers: {Authorization: authorization}});
 }

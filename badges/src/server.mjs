@@ -5,6 +5,8 @@ import Koa from 'koa';
 import niv from 'node-input-validator';
 import { router } from './routes/index.mjs';
 import { bearer, authorize } from './security.mjs';
+import { eventsQueue } from './queue/events.mjs';
+import { handleEvent } from './events.mjs'
 
 dotenv.config();
 
@@ -27,4 +29,7 @@ app.use(bodyParser({ multipart: true }));
 
 app.use(router.routes());
 
-app.listen(port, () => console.log(`Accepting connections on ${port}`));
+app.listen(port, () => {
+  eventsQueue.subscribe(handleEvent);
+  console.log(`Accepting connections on ${port}`)
+});

@@ -17,6 +17,7 @@ services:
       context: ./backend
     depends_on:
       - postgres
+      - rabbitmq
     restart: on-failure
     volumes:
       - ./backend/src:/usr/src/app/src
@@ -29,7 +30,9 @@ services:
       PGUSER: postgres
       PGPASSWORD: postgres
       BADGES_HOST: http://badges
-
+      AMQP_HOST: amqp://rabbitmq
+      EVENTS_QUEUE: events
+      WAIT_HOSTS: postgres:5432, rabbitmq:5672
   
   account-postgres:
     image: postgres:13-alpine
@@ -69,6 +72,7 @@ services:
       context: ./badges
     depends_on:
       - badges-postgres
+      - rabbitmq
     restart: on-failure
     volumes:
       - ./badges/src:/usr/src/app/src
@@ -80,8 +84,9 @@ services:
       PGDATABASE: badges 
       PGUSER: postgres
       PGPASSWORD: postgres
-    ports:
-      - "8001:80"
+      AMQP_HOST: amqp://rabbitmq
+      EVENTS_QUEUE: events
+      WAIT_HOSTS: postgres:5432, rabbitmq:5672
 
   frontend:
     build:
