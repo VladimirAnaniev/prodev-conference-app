@@ -1,6 +1,9 @@
 version: '3'
 
 services:
+  rabbitmq:
+    image: "rabbitmq:3"
+
   postgres:
     image: postgres:13-alpine
     environment:
@@ -14,6 +17,7 @@ services:
       context: ./backend
     depends_on:
       - postgres
+      - rabbitmq
     restart: on-failure
     volumes:
       - ./backend/src:/usr/src/app/src
@@ -25,7 +29,10 @@ services:
       PGDATABASE: conference_go 
       PGUSER: postgres
       PGPASSWORD: postgres
-
+      BADGES_HOST: http://badges
+      AMQP_HOST: amqp://rabbitmq
+      EVENTS_QUEUE: events
+      WAIT_HOSTS: postgres:5432, rabbitmq:5672
   
   account-postgres:
     image: postgres:13-alpine
@@ -52,6 +59,35 @@ services:
       PGUSER: postgres
       PGPASSWORD: postgres
 
+  badges-postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: badges
+    volumes:
+      - ./badges/data:/var/lib/postgresql/data
+  badges:
+    build:
+      context: ./badges
+    depends_on:
+      - badges-postgres
+      - rabbitmq
+    restart: on-failure
+    volumes:
+      - ./badges/src:/usr/src/app/src
+    environment:
+      PORT: 80
+      JWT_SECRET: oiashd8w73y24iuhrt8o427tryhsdgjn
+      PGHOST: badges-postgres
+      PGPORT: 5432
+      PGDATABASE: badges 
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      AMQP_HOST: amqp://rabbitmq
+      EVENTS_QUEUE: events
+      WAIT_HOSTS: postgres:5432, rabbitmq:5672
+
   frontend:
     build:
       context: ./frontend
@@ -61,4 +97,6 @@ services:
       - backend
     ports:
       - "8080:80"
+    volumes:
+      - ./frontend/frontend.nginx.conf:/etc/nginx/conf.d/default.conf
       

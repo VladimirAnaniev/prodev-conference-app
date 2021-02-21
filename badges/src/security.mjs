@@ -3,17 +3,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const secret = process.env['JWT_SECRET']
+const secret = process.env['JWT_SECRET'];
 if (secret === undefined || secret.length === 0) {
   console.error('ERROR: Missing JWT_SECRET environment variable.');
   process.exit(2);
-}
-export function verifyToken(token) {
-  return jwt.verify(token, secret);
-}
-
-export function decodeToken(token) {
-  return jwt.decode(token, secret);
 }
 
 export async function authorize(ctx, next) {
@@ -40,4 +33,8 @@ export async function bearer(ctx, next) {
     }
   }
   await next();
+}
+
+export function verifyToken(token) {
+  return jwt.verify(token, secret);
 }

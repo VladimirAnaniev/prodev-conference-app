@@ -13,8 +13,5 @@ export function signToken(claims) {
   if (!Number.isInteger(claims.exp)) {
     claims.exp = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
   }
-  console.log(claims);
-  const token =  jwt.sign(claims, secret);
-  console.log(jwt.decode(token, secret));
-  return token;
+  return jwt.sign(claims, secret);
 }
